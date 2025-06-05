@@ -2,8 +2,6 @@ package game;
 
 import game.model.Bot;
 import game.service.BotService;
-import game.model.Tile;
-import game.service.TileService;
 import game.service.MapService;
 import game.strategies.RandomWalkStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +13,15 @@ import java.util.List;
 @Service
 public class CoreGameService {
 
-  private MapService mapService;
-  private TileService tileService;
-  private BotService botService;
+  private final MapService mapService;
+  private final BotService botService;
 
-  @Autowired
-  RandomWalkStrategy randomWalkStrategy;
+  @Autowired RandomWalkStrategy randomWalkStrategy;
 
   List<Bot> activePlayers = new ArrayList<>();
 
-  public CoreGameService(MapService mapService, TileService tileService, BotService botService) {
+  public CoreGameService(MapService mapService, BotService botService) {
     this.botService = botService;
-    this.tileService = tileService;
     this.mapService = mapService;
   }
 
@@ -36,32 +31,31 @@ public class CoreGameService {
   }
 
   private void generateStartMap() {
-    Tile startTile = new Tile(0, 0, tileService.addStarter());
-    mapService.add(startTile);
-    mapService.setStartTile(startTile);
-
-    mapService.add(new Tile(0, 1, tileService.rand()));
-    mapService.add(new Tile(1, 0, tileService.rand()));
-    mapService.add(new Tile(0, -1, tileService.rand()));
-    mapService.add(new Tile(-1, 0, tileService.rand()));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        if (x == 0 && y == 0) {
+          mapService.generateStartTile();
+        }
+        mapService.generateTileAt(x, y);
+      }
+    }
   }
 
   private Bot generatePlayer() {
-    Bot startingBot = new Bot(randomWalkStrategy, mapService.getStartTile(), 5);
-    return startingBot;
+    return new Bot(randomWalkStrategy, mapService.getStartTile(), 5);
   }
 
-  public void printLogInfo() {
-    mapService.print();
+  public void printLogInfo(Bot bot) {
+    mapService.print(bot);
   }
 
   public void startGame() {
-    activePlayers.forEach(bot -> {
-      while (!bot.isDone) {
-        botService.takeTurn(bot);
-        printLogInfo();
-      }
-    });
+    activePlayers.forEach(
+        bot -> {
+          while (!bot.isDone) {
+            botService.takeTurn(bot);
+            printLogInfo(bot);
+          }
+        });
   }
-
 }
