@@ -1,5 +1,6 @@
 package game.model;
 
+import game.model.tile.Tile;
 import game.strategies.BotStrategy;
 
 public class Bot {

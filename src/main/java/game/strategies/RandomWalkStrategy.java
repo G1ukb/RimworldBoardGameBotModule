@@ -1,7 +1,7 @@
 package game.strategies;
 
 import game.model.Bot;
-import game.model.Tile;
+import game.model.tile.Tile;
 import game.service.MapService;
 import org.springframework.stereotype.Service;
 

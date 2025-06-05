@@ -1,7 +1,7 @@
 package game.service;
 
 import game.model.Bot;
-import game.model.Tile;
+import game.model.tile.Tile;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
