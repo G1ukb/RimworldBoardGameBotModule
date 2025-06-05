@@ -1,0 +1,24 @@
+{
+  "tiles": [
+    {
+      "name": "Grass",
+      "symbol": "..."
+    },
+    {
+      "name": "Forest",
+      "symbol": "|||"
+    },
+    {
+      "name": "Mountain",
+      "symbol": "^^^"
+    },
+    {
+      "name": "Lake",
+      "symbol": "~~~"
+    },
+    {
+      "name": "Desert",
+      "symbol": "*~*"
+    }
+  ]
+}
