@@ -42,7 +42,7 @@ public class CoreGameService {
   }
 
   private Bot generatePlayer() {
-    return new Bot(randomWalkStrategy, mapService.getStartTile(), 5);
+    return new Bot(randomWalkStrategy, mapService.getStartTile(), 5, 4, 4);
   }
 
   public void printLogInfo(Bot bot) {
