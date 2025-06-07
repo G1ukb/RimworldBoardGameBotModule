@@ -18,7 +18,7 @@ public enum TileType {
       TileCategory.FOREST, "III", "Обычный Лес", Map.of(ResourceType.BUILDING_MATERIAL, 2)),
 
   // Тайлы Воды
-  COMMON_LAKE(TileCategory.WATER, "~~~", "Обычное Озеро", Map.of(ResourceType.FOOD, 1)),
+  COMMON_LAKE(TileCategory.WATER, "~~~", "Обычное Озеро", Map.of(ResourceType.MEDICINE, 1)),
 
   // Тайлы Гор
   COMMON_MOUNTAIN(
@@ -28,7 +28,7 @@ public enum TileType {
       Map.of(ResourceType.BUILDING_MATERIAL, 3)),
 
   // Тайлы Пустыни
-  DESERT(TileCategory.DESERT, "*~*", "Обычная Пустыня", Map.of());
+  DESERT(TileCategory.DESERT, "*~*", "Обычная Пустыня", Map.of(ResourceType.SPECIAL, 1));
 
   private final TileCategory category;
   private final String symbol;

@@ -10,10 +10,13 @@ import java.util.Map;
 
 @Service
 public class ActionService {
-  private final MapService mapService;
 
-  public ActionService(MapService mapService) {
+  private final MapService mapService;
+  private final ResourceService resourceService;
+
+  public ActionService(MapService mapService, ResourceService resourceService) {
     this.mapService = mapService;
+    this.resourceService = resourceService;
   }
 
   public void execute(ActionType action, Bot bot, Tile target) {
@@ -22,6 +25,7 @@ public class ActionService {
     switch (action) {
       case MOVE -> move(bot, target);
       case COLLECT -> collect(bot);
+      case WAIT -> waitAction();
     }
 
     bot.actionsRemaining--;
@@ -35,6 +39,10 @@ public class ActionService {
     mapService.exploreTile(destination);
   }
 
+  private void waitAction() {
+    System.out.println("Бот ждет");
+  }
+
   private void collect(Bot bot) {
     Map<ResourceType, Integer> tileResources = bot.currentTile.type.resources();
     StringBuilder log = new StringBuilder();
@@ -42,9 +50,7 @@ public class ActionService {
     for (Map.Entry<ResourceType, Integer> entry : tileResources.entrySet()) {
       ResourceType type = entry.getKey();
       int gained = entry.getValue();
-      int current = bot.resources.getOrDefault(type, 0);
-      int newAmount = Math.min(current + gained, type.cap());
-      bot.resources.put(type, newAmount);
+      resourceService.add(type, gained);
       log.append(type.name()).append("=").append(gained).append(" ");
     }
 

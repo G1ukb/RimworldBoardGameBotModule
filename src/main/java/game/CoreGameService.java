@@ -3,8 +3,12 @@ package game;
 import game.model.Bot;
 import game.model.ResourceType;
 import game.service.BotService;
+import game.service.GoalService;
 import game.service.MapService;
-import game.strategies.RandomWalkStrategy;
+import game.service.ResourceService;
+import game.strategies.BotStrategy;
+import game.strategies.ExplorerStrategy;
+import game.strategies.FarmerStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,20 +23,31 @@ public class CoreGameService {
   private final MapService mapService;
   private final BotService botService;
   private final GameConfig gameConfig;
+  private final ResourceService resourceService;
+  private final GoalService goalService;
 
-  @Autowired RandomWalkStrategy randomWalkStrategy;
+  @Autowired ExplorerStrategy explorerStrategy;
+  @Autowired FarmerStrategy farmerStrategy;
 
   List<Bot> activePlayers = new ArrayList<>();
 
-  public CoreGameService(MapService mapService, BotService botService, GameConfig gameConfig) {
+  public CoreGameService(
+      MapService mapService,
+      BotService botService,
+      GameConfig gameConfig,
+      ResourceService resourceService,
+      GoalService goalService) {
     this.botService = botService;
     this.mapService = mapService;
     this.gameConfig = gameConfig;
+    this.resourceService = resourceService;
+    this.goalService = goalService;
   }
 
   public void generateStart() {
     generateStartMap();
-    activePlayers.add(generatePlayer());
+    activePlayers.add(generatePlayer(explorerStrategy, "explorer"));
+    activePlayers.add(generatePlayer(farmerStrategy, "farmer"));
   }
 
   private void generateStartMap() {
@@ -46,13 +61,14 @@ public class CoreGameService {
     }
   }
 
-  private Bot generatePlayer() {
+  private Bot generatePlayer(BotStrategy botStrategy, String botName) {
     return new Bot(
-        randomWalkStrategy,
+        botStrategy,
         mapService.getStartTile(),
         gameConfig.botMaxActions(),
         gameConfig.botStartHp(),
-        gameConfig.botStartMood());
+        gameConfig.botStartMood(),
+        botName);
   }
 
   public void printLogInfo(Bot bot, int turn) {
@@ -67,23 +83,27 @@ public class CoreGameService {
     System.out.println("Конец Хода: " + turn);
     mapService.print(null);
     printGroupResources();
+    goalService.logProgress();
 
     System.out.println("--------------------------------");
   }
 
   public void startGame() {
-    for (int turn = 1; turn <= gameConfig.maxTurns(); turn++) {
+    int turn = 1;
+    while (!goalService.isAllGoalsCompleted()) {
       System.out.println("Начало Хода: " + turn);
 
       for (Bot bot : activePlayers) {
         botService.resetActions(bot);
         while (bot.actionsRemaining > 0) {
+          System.out.println("BOT: " + bot.name);
           botService.takeAction(bot);
           printLogInfo(bot, turn);
         }
       }
 
       printEndTurnInfo(turn);
+      turn++;
     }
   }
 
@@ -98,6 +118,6 @@ public class CoreGameService {
       }
     }
 
-    System.out.println("Общие ресурсы группы: " + totals);
+    System.out.println("Общие ресурсы группы: " + resourceService.getAll());
   }
 }

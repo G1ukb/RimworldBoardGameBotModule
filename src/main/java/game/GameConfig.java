@@ -11,5 +11,4 @@ public record GameConfig(
     @Value("${game.max-y:2}") int maxY,
     @Value("${game.bot.max-actions:5}") int botMaxActions,
     @Value("${game.bot.start-hp:4}") int botStartHp,
-    @Value("${game.bot.start-mood:4}") int botStartMood,
-    @Value("${game.max-turns:3}") int maxTurns) {}
+    @Value("${game.bot.start-mood:4}") int botStartMood) {}
