@@ -55,7 +55,7 @@ public class MapService {
 
         Tile tile = tiles.get(new Point(x, y));
 
-        if (tile != null && tile.equals(bot.currentTile)) {
+        if ((tile != null && bot != null) && tile.equals(bot.currentTile)) {
           System.out.print("[  B  ]");
         } else if (tile != null) {
           if (tile.isExplored) System.out.print("[|" + tile.type.symbol() + "|]");

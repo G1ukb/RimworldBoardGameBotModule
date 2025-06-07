@@ -1,7 +1,9 @@
 package game.strategies;
 
 import game.model.Bot;
+import game.model.action.ActionType;
 import game.model.tile.Tile;
+import game.service.ActionService;
 import game.service.MapService;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,7 @@ public class RandomWalkStrategy implements BotStrategy {
   private static final List<Point> DIRECTIONS =
       List.of(new Point(0, 1), new Point(1, 0), new Point(0, -1), new Point(-1, 0));
 
-  public void executeStep(Bot bot) {
+  public void executeStep(Bot bot, ActionService actionService) {
     Point step;
     int newX;
     int newY;
@@ -37,9 +39,8 @@ public class RandomWalkStrategy implements BotStrategy {
     Tile next = mapService.getTileAt(newX, newY);
 
     if (next != null) {
-      bot.currentTile = next;
-      System.out.println("Бот переместился на тайл: " + next.x + ":" + next.y);
-      mapService.exploreTile(next);
+      actionService.execute(ActionType.MOVE, bot, next);
+      actionService.execute(ActionType.COLLECT, bot, null);
     }
   }
 }
