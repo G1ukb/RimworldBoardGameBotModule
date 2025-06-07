@@ -35,7 +35,14 @@ public class MapService {
   }
 
   public Tile getTileAt(int x, int y) {
+    if (!isWithinBounds(x, y)) {
+      return null;
+    }
     return tiles.get(new Point(x, y));
+  }
+
+  public boolean isWithinBounds(int x, int y) {
+    return x >= minX && x <= maxX && y >= minY && y <= maxY;
   }
 
   public void exploreTile(Tile tile) {

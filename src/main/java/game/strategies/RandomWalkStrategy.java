@@ -23,14 +23,23 @@ public class RandomWalkStrategy implements BotStrategy {
       List.of(new Point(0, 1), new Point(1, 0), new Point(0, -1), new Point(-1, 0));
 
   public void executeStep(Bot bot) {
-    Point step = DIRECTIONS.get(random.nextInt(DIRECTIONS.size()));
-    int newX = bot.currentTile.x + step.x;
-    int newY = bot.currentTile.y + step.y;
+    Point step;
+    int newX;
+    int newY;
+    do {
+      step = DIRECTIONS.get(random.nextInt(DIRECTIONS.size()));
+      newX = bot.currentTile.x + step.x;
+      newY = bot.currentTile.y + step.y;
+    } while (!mapService.isWithinBounds(newX, newY));
 
+    newX = bot.currentTile.x + step.x;
+    newY = bot.currentTile.y + step.y;
     Tile next = mapService.getTileAt(newX, newY);
-    bot.currentTile = next;
 
-    System.out.println("Бот переместился на тайл: " + next.x + ":" + next.y);
-    mapService.exploreTile(next);
+    if (next != null) {
+      bot.currentTile = next;
+      System.out.println("Бот переместился на тайл: " + next.x + ":" + next.y);
+      mapService.exploreTile(next);
+    }
   }
 }
