@@ -1,5 +1,6 @@
 package game.service;
 
+import game.GameConfig;
 import game.model.Bot;
 import game.model.tile.Tile;
 import org.springframework.stereotype.Service;
@@ -12,14 +13,11 @@ public class MapService {
 
   public final Map<Point, Tile> tiles = new HashMap<>();
   private final TileService tileService;
+  private final GameConfig config;
 
-  public int minX = -2;
-  public int minY = -2;
-  public int maxX = 2;
-  public int maxY = 2;
-
-  public MapService(TileService tileService) {
+  public MapService(TileService tileService, GameConfig config) {
     this.tileService = tileService;
+    this.config = config;
   }
 
   public void generateStartTile() {
@@ -42,7 +40,7 @@ public class MapService {
   }
 
   public boolean isWithinBounds(int x, int y) {
-    return x >= minX && x <= maxX && y >= minY && y <= maxY;
+    return x >= config.minX() && x <= config.maxX() && y >= config.minY() && y <= config.maxY();
   }
 
   public void exploreTile(Tile tile) {
@@ -52,8 +50,8 @@ public class MapService {
   public void print(Bot bot) {
     if (tiles.isEmpty()) return;
 
-    for (int y = maxY; y >= minY; y--) {
-      for (int x = minX; x <= maxX; x++) {
+    for (int y = config.maxY(); y >= config.minY(); y--) {
+      for (int x = config.minX(); x <= config.maxX(); x++) {
 
         Tile tile = tiles.get(new Point(x, y));
 

@@ -15,14 +15,16 @@ public class CoreGameService {
 
   private final MapService mapService;
   private final BotService botService;
+  private final GameConfig gameConfig;
 
   @Autowired RandomWalkStrategy randomWalkStrategy;
 
   List<Bot> activePlayers = new ArrayList<>();
 
-  public CoreGameService(MapService mapService, BotService botService) {
+  public CoreGameService(MapService mapService, BotService botService, GameConfig gameConfig) {
     this.botService = botService;
     this.mapService = mapService;
+    this.gameConfig = gameConfig;
   }
 
   public void generateStart() {
@@ -31,8 +33,8 @@ public class CoreGameService {
   }
 
   private void generateStartMap() {
-    for (int x = -2; x <= 2; x++) {
-      for (int y = -2; y <= 2; y++) {
+    for (int x = gameConfig.minX(); x <= gameConfig.maxX(); x++) {
+      for (int y = gameConfig.minY(); y <= gameConfig.maxY(); y++) {
         if (x == 0 && y == 0) {
           mapService.generateStartTile();
         }
@@ -42,20 +44,28 @@ public class CoreGameService {
   }
 
   private Bot generatePlayer() {
-    return new Bot(randomWalkStrategy, mapService.getStartTile(), 5, 4, 4);
+    return new Bot(
+        randomWalkStrategy,
+        mapService.getStartTile(),
+        gameConfig.botMaxActions(),
+        gameConfig.botStartHp(),
+        gameConfig.botStartMood());
   }
 
-  public void printLogInfo(Bot bot) {
+  public void printLogInfo(Bot bot, int turn) {
+    System.out.println("Ход: " + turn);
     mapService.print(bot);
   }
 
   public void startGame() {
-    activePlayers.forEach(
-        bot -> {
-          while (!bot.isDone) {
-            botService.takeTurn(bot);
-            printLogInfo(bot);
-          }
-        });
+    for (int turn = 1; turn <= gameConfig.maxTurns(); turn++) {
+      for (Bot bot : activePlayers) {
+        botService.resetActions(bot);
+        while (bot.actionsRemaining > 0) {
+          botService.takeAction(bot);
+          printLogInfo(bot, turn);
+        }
+      }
+    }
   }
 }
