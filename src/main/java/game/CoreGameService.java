@@ -9,16 +9,17 @@ import game.service.ResourceService;
 import game.strategies.BotStrategy;
 import game.strategies.ExplorerStrategy;
 import game.strategies.FarmerStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CoreGameService {
+
+  private static final Logger log = LoggerFactory.getLogger(CoreGameService.class);
 
   private final MapService mapService;
   private final BotService botService;
@@ -46,8 +47,8 @@ public class CoreGameService {
 
   public void generateStart() {
     generateStartMap();
-    activePlayers.add(generatePlayer(explorerStrategy, "explorer"));
-    activePlayers.add(generatePlayer(farmerStrategy, "farmer"));
+    activePlayers.add(generatePlayer(explorerStrategy, "explorer", "E"));
+    activePlayers.add(generatePlayer(farmerStrategy, "farmer", "F"));
   }
 
   private void generateStartMap() {
@@ -61,48 +62,55 @@ public class CoreGameService {
     }
   }
 
-  private Bot generatePlayer(BotStrategy botStrategy, String botName) {
+  private Bot generatePlayer(BotStrategy botStrategy, String botName, String botInitial) {
     return new Bot(
         botStrategy,
         mapService.getStartTile(),
         gameConfig.botMaxActions(),
         gameConfig.botStartHp(),
         gameConfig.botStartMood(),
-        botName);
+        botName,
+        botInitial);
   }
 
-  public void printLogInfo(Bot bot, int turn) {
-    mapService.print(bot);
-    System.out.println("У бота осталось действий: " + bot.actionsRemaining);
-    System.out.println("--------------------------------");
-  }
+  public void printEndTurnInfo(int turn, Map<Bot, List<String>> actions) {
+    log.info("--------------------------------");
+    log.info("Конец Хода: {}", turn);
 
-  public void printEndTurnInfo(int turn) {
-    System.out.println("--------------------------------");
+    for (Bot bot : activePlayers) {
+      log.info("Bot: {}", bot.name);
+      List<String> acts = actions.get(bot);
+      if (acts != null) {
+        int idx = 1;
+        for (String a : acts) {
+          log.info("Действие {}: {}", idx++, a);
+        }
+      }
+    }
 
-    System.out.println("Конец Хода: " + turn);
-    mapService.print(null);
+    log.info("Карта:\n{}", mapService.render(activePlayers));
     printGroupResources();
     goalService.logProgress();
 
-    System.out.println("--------------------------------");
+    log.info("--------------------------------");
   }
 
   public void startGame() {
     int turn = 1;
     while (!goalService.isAllGoalsCompleted()) {
-      System.out.println("Начало Хода: " + turn);
+      log.info("Начало Хода: {}", turn);
+      Map<Bot, List<String>> actions = new LinkedHashMap<>();
 
       for (Bot bot : activePlayers) {
         botService.resetActions(bot);
+        List<String> botActions = new ArrayList<>();
         while (bot.actionsRemaining > 0) {
-          System.out.println("BOT: " + bot.name);
-          botService.takeAction(bot);
-          printLogInfo(bot, turn);
+          botActions.addAll(botService.takeAction(bot));
         }
+        actions.put(bot, botActions);
       }
 
-      printEndTurnInfo(turn);
+      printEndTurnInfo(turn, actions);
       turn++;
     }
   }
@@ -118,6 +126,6 @@ public class CoreGameService {
       }
     }
 
-    System.out.println("Общие ресурсы группы: " + resourceService.getAll());
+    log.info("Общие ресурсы группы: {}", resourceService.getAll());
   }
 }

@@ -1,14 +1,15 @@
 package game.service;
 
-import game.model.Bot;
 import game.model.ResourceType;
 import game.model.tile.Tile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class GoalService {
+
+  private static final Logger log = LoggerFactory.getLogger(GoalService.class);
 
   private final MapService mapService;
   private final ResourceService resourceService;
@@ -38,7 +39,7 @@ public class GoalService {
   public void logProgress() {
     long explored = mapService.tiles.values().stream().filter(t -> t.isExplored).count();
     long total = mapService.tiles.size();
-    System.out.println("Цель: открыть тайлы: открыто " + explored + " из " + total);
+    log.info("Цель: открыть тайлы: открыто {} из {}", explored, total);
 
     int totalCollected = 0;
     int totalPossible = 0;
@@ -46,7 +47,7 @@ public class GoalService {
       totalCollected += resourceService.get(type);
       totalPossible += type.cap();
     }
-    System.out.println("Цель: ресурсы " + totalCollected + " собраны из " + totalPossible);
+    log.info("Цель: ресурсы {} собраны из {}", totalCollected, totalPossible);
   }
 
 }

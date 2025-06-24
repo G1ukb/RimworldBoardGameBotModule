@@ -11,6 +11,7 @@ public class Bot {
   public Tile currentTile;
   public Integer maximumActions;
   public String name;
+  public String initial;
 
   // actions
   public Integer actionsRemaining;
@@ -31,11 +32,13 @@ public class Bot {
       Integer maximumActions,
       Integer startHp,
       Integer startMood,
-      String name) {
+      String name,
+      String initial) {
     this.strategy = botStrategy;
     this.currentTile = startTile;
     this.maximumActions = maximumActions;
     this.name = name;
+    this.initial = initial;
 
     actionsRemaining = maximumActions;
     isDone = false;

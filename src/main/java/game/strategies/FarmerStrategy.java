@@ -9,6 +9,9 @@ import game.service.PathfindingService;
 import game.service.ResourceService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class FarmerStrategy implements BotStrategy {
 
@@ -21,23 +24,26 @@ public class FarmerStrategy implements BotStrategy {
   }
 
   @Override
-  public void executeStep(Bot bot, ActionService actionService) {
+  public List<String> executeStep(Bot bot, ActionService actionService) {
+    List<String> logs = new ArrayList<>();
     ResourceType need = findNeededResource();
     if (need == null) {
-      actionService.execute(ActionType.WAIT, bot, null);
-      return;
+      logs.add(actionService.execute(ActionType.WAIT, bot, null));
+      return logs;
     }
 
     if (bot.currentTile.type.resources().containsKey(need)) {
-      actionService.execute(ActionType.COLLECT, bot, null);
+      logs.add(actionService.execute(ActionType.COLLECT, bot, null));
     } else {
-      Tile next = pathfindingService.nextStep(bot.currentTile, t -> t.type.resources().containsKey(need));
+      Tile next =
+          pathfindingService.nextStep(bot.currentTile, t -> t.type.resources().containsKey(need));
       if (next != null && next != bot.currentTile) {
-        actionService.execute(ActionType.MOVE, bot, next);
+        logs.add(actionService.execute(ActionType.MOVE, bot, next));
       } else {
-        actionService.execute(ActionType.COLLECT, bot, null);
+        logs.add(actionService.execute(ActionType.COLLECT, bot, null));
       }
     }
+    return logs;
   }
 
   private ResourceType findNeededResource() {
@@ -46,5 +52,4 @@ public class FarmerStrategy implements BotStrategy {
     }
     return null;
   }
-
 }

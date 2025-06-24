@@ -1,0 +1,13 @@
+<configuration>
+    <timestamp key="startTime" datePattern="yyyy-MM-dd_HH-mm-ss"/>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>log/${startTime}.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

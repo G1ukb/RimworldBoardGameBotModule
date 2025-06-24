@@ -7,8 +7,8 @@ import game.service.ActionService;
 import game.service.PathfindingService;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 @Service
 public class ExplorerStrategy implements BotStrategy {
@@ -20,13 +20,14 @@ public class ExplorerStrategy implements BotStrategy {
   }
 
   @Override
-  public void executeStep(Bot bot, ActionService actionService) {
+  public List<String> executeStep(Bot bot, ActionService actionService) {
+    List<String> logs = new ArrayList<>();
     Tile next = pathfindingService.nextStep(bot.currentTile, t -> !t.isExplored);
 
     if (next != null && next != bot.currentTile) {
-      actionService.execute(ActionType.MOVE, bot, next);
+      logs.add(actionService.execute(ActionType.MOVE, bot, next));
     }
-    actionService.execute(ActionType.COLLECT, bot, null);
+    logs.add(actionService.execute(ActionType.COLLECT, bot, null));
+    return logs;
   }
-
 }

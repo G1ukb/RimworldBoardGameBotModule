@@ -3,6 +3,8 @@ package game.service;
 import game.model.Bot;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BotService {
 
@@ -12,10 +14,11 @@ public class BotService {
     this.actionService = actionService;
   }
 
-  public void takeAction(Bot bot) {
+  public List<String> takeAction(Bot bot) {
     if (bot.actionsRemaining > 0) {
-      bot.strategy.executeStep(bot, actionService);
+      return bot.strategy.executeStep(bot, actionService);
     }
+    return List.of();
   }
 
   public void resetActions(Bot bot) {
