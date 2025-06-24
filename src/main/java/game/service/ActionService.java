@@ -4,16 +4,12 @@ import game.model.Bot;
 import game.model.ResourceType;
 import game.model.action.ActionType;
 import game.model.tile.Tile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
 public class ActionService {
-
-  private static final Logger log = LoggerFactory.getLogger(ActionService.class);
 
   private final MapService mapService;
   private final ResourceService resourceService;
@@ -34,7 +30,6 @@ public class ActionService {
         };
 
     bot.actionsRemaining--;
-    log.info(result);
     return result;
   }
 

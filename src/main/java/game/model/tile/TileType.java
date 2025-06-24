@@ -7,28 +7,28 @@ import java.util.Map;
 
 public enum TileType {
   // Стартовые тайлы
-  START(TileCategory.START, "(s)", "Стартовая позиция", Map.of(ResourceType.FOOD, 2)),
+  START(TileCategory.START, " (s)", "Стартовая позиция", Map.of(ResourceType.FOOD, 2)),
 
   // Тайлы Полей
-  COMMON_GRASS(TileCategory.GRASS, "...", "Обычное Поле", Map.of(ResourceType.FOOD, 1)),
-  SMOG_GRASS(TileCategory.GRASS, ":::", "Задымленное Поле", Map.of(ResourceType.FOOD, 1)),
+  COMMON_GRASS(TileCategory.GRASS, " G1 ", "Обычное Поле", Map.of(ResourceType.FOOD, 1)),
+  SMOG_GRASS(TileCategory.GRASS, " G2 ", "Задымленное Поле", Map.of(ResourceType.FOOD, 1)),
 
   // Тайлы Леса
   COMMON_FOREST(
-      TileCategory.FOREST, "III", "Обычный Лес", Map.of(ResourceType.BUILDING_MATERIAL, 2)),
+      TileCategory.FOREST, " F1 ", "Обычный Лес", Map.of(ResourceType.BUILDING_MATERIAL, 2)),
 
   // Тайлы Воды
-  COMMON_LAKE(TileCategory.WATER, "~~~", "Обычное Озеро", Map.of(ResourceType.MEDICINE, 1)),
+  COMMON_LAKE(TileCategory.WATER, " W1 ", "Обычное Озеро", Map.of(ResourceType.MEDICINE, 1)),
 
   // Тайлы Гор
   COMMON_MOUNTAIN(
       TileCategory.MOUNTAIN,
-      "^^^",
+      " M1 ",
       "Обычная Горная Местность",
       Map.of(ResourceType.BUILDING_MATERIAL, 3)),
 
   // Тайлы Пустыни
-  DESERT(TileCategory.DESERT, "*~*", "Обычная Пустыня", Map.of(ResourceType.SPECIAL, 1));
+  DESERT(TileCategory.DESERT, " D1 ", "Обычная Пустыня", Map.of(ResourceType.SPECIAL, 1));
 
   private final TileCategory category;
   private final String symbol;

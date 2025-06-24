@@ -1,13 +1,11 @@
 package game.service;
 
 import game.GameConfig;
-import game.model.Bot;
 import game.model.tile.Tile;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 @Service
 public class MapService {
@@ -48,43 +46,4 @@ public class MapService {
     if (!tile.isExplored) tile.isExplored = true;
   }
 
-  private String padContent(String content) {
-    if (content.length() >= 5) return content.substring(0, 5);
-    int spaces = 5 - content.length();
-    int left = spaces / 2;
-    int right = spaces - left;
-    return " ".repeat(left) + content + " ".repeat(right);
-  }
-
-  public String render(List<Bot> bots) {
-    if (tiles.isEmpty()) return "";
-
-    StringBuilder sb = new StringBuilder();
-    for (int y = config.maxY(); y >= config.minY(); y--) {
-      for (int x = config.minX(); x <= config.maxX(); x++) {
-        Tile tile = tiles.get(new Point(x, y));
-        List<Bot> here = new ArrayList<>();
-        if (bots != null) {
-          for (Bot b : bots) {
-            if (b.currentTile.x == x && b.currentTile.y == y) {
-              here.add(b);
-            }
-          }
-        }
-
-        if (tile != null) {
-          if (!here.isEmpty()) {
-            String mark = here.size() == 1 ? here.getFirst().initial : here.size() + "B";
-            sb.append("[").append(padContent(mark)).append("]");
-          } else if (tile.isExplored) {
-            sb.append("[|").append(tile.type.symbol()).append("|]");
-          } else {
-            sb.append("[ ").append(tile.type.symbol()).append(" ]");
-          }
-        }
-      }
-      sb.append(System.lineSeparator());
-    }
-    return sb.toString();
-  }
 }
