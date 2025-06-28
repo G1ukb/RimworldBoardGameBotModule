@@ -1,6 +1,6 @@
 package game.service;
 
-import game.model.ResourceType;
+import game.model.action.ResourceType;
 import org.springframework.stereotype.Service;
 
 import java.util.EnumMap;
@@ -20,6 +20,8 @@ public class ResourceService {
   public void add(ResourceType type, int amount) {
     int current = resources.get(type);
     int newAmount = Math.min(current + amount, type.cap());
+    newAmount = Math.max(newAmount, 0);
+
     resources.put(type, newAmount);
   }
 

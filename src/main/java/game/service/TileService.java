@@ -1,29 +1,38 @@
 package game.service;
 
-import game.model.tile.TileType;
+import game.model.tile.BasicTile;
+import game.model.tile.desert.CommonDesertTile;
+import game.model.tile.forest.CommonForestTile;
+import game.model.tile.grass.G1FieldOfSilence;
+import game.model.tile.lake.CommonLakeTile;
+import game.model.tile.mountain.CommonMountainTile;
+import game.model.tile.start.CommonStartTile;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 @Service
 public class TileService {
 
-  private final List<TileType> randomTiles;
+  private final List<BasicTile> randomTiles;
   private final Random rnd = new Random();
 
   public TileService() {
-    randomTiles = Arrays.stream(TileType.values())
-                      .filter(t -> t != TileType.START)
-                      .toList();
+    randomTiles =
+        List.of(
+            new G1FieldOfSilence(),
+            new CommonForestTile(),
+            new CommonDesertTile(),
+            new CommonLakeTile(),
+            new CommonMountainTile());
   }
 
-  public TileType addStarter() {
-    return TileType.START;
+  public BasicTile addStarter() {
+    return new CommonStartTile();
   }
 
-  public TileType rand() {
+  public BasicTile rand() {
     return randomTiles.get(rnd.nextInt(randomTiles.size()));
   }
 }

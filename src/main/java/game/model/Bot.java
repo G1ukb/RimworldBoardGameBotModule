@@ -1,5 +1,6 @@
 package game.model;
 
+import game.model.action.ResourceType;
 import game.model.tile.Tile;
 import game.strategies.BotStrategy;
 

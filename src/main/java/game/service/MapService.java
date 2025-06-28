@@ -2,6 +2,7 @@ package game.service;
 
 import game.GameConfig;
 import game.model.Bot;
+import game.model.effect.TileEffect;
 import game.model.tile.Tile;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,17 @@ public class MapService {
   private final TileService tileService;
   private final GameConfig config;
   private final LogService logService;
+  private final ResourceService resourceService;
 
-  public MapService(TileService tileService, GameConfig config, @Lazy LogService logService) {
+  public MapService(
+      TileService tileService,
+      GameConfig config,
+      @Lazy LogService logService,
+      ResourceService resourceService) {
     this.tileService = tileService;
     this.config = config;
     this.logService = logService;
+    this.resourceService = resourceService;
   }
 
   public void generateStartTile() {
@@ -52,7 +59,12 @@ public class MapService {
       int oldHealth = bot.health;
       int oldPsyche = bot.psyche;
 
-      tile.type.applyDiscoverEffect(bot);
+      TileEffect effect = tile.type.discoverEffect();
+      effect.applyTo(bot);
+      for (var entry : effect.resources().entrySet()) {
+        resourceService.add(entry.getKey(), entry.getValue());
+      }
+
       return logService.createLogDiscoverEffect(oldHealth, oldPsyche, bot);
     }
     return "";
