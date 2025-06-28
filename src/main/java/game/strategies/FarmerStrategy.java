@@ -1,7 +1,7 @@
 package game.strategies;
 
 import game.model.Bot;
-import game.model.ResourceType;
+import game.model.action.ResourceType;
 import game.model.action.ActionType;
 import game.model.tile.Tile;
 import game.service.ActionService;

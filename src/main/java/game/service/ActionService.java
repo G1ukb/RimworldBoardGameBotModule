@@ -1,8 +1,9 @@
 package game.service;
 
 import game.model.Bot;
-import game.model.ResourceType;
 import game.model.action.ActionType;
+import game.model.action.ResourceType;
+import game.model.effect.TileEffect;
 import game.model.tile.Tile;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,15 @@ public class ActionService {
 
   private final MapService mapService;
   private final ResourceService resourceService;
+  private final LogService logService;
+
   private final Random rnd = new Random();
 
-  public ActionService(MapService mapService, ResourceService resourceService) {
+  public ActionService(
+      MapService mapService, ResourceService resourceService, LogService logService) {
     this.mapService = mapService;
     this.resourceService = resourceService;
+    this.logService = logService;
   }
 
   public List<String> execute(ActionType action, Bot bot, Tile target) {
@@ -43,7 +48,13 @@ public class ActionService {
 
     bot.currentTile = destination;
     String effect = mapService.exploreTile(destination, bot);
-    logs.add("Бот переместился на тайл: " + destination.x + ":" + destination.y + " :" + destination.type.tileName());
+    logs.add(
+        "Бот переместился на тайл: "
+            + destination.x
+            + ":"
+            + destination.y
+            + " : "
+            + destination.type.tileName());
 
     if (!effect.isBlank()) {
       logs.add("Эффект открытия тайла: " + effect);
@@ -58,21 +69,22 @@ public class ActionService {
 
   private List<String> collect(Bot bot) {
     int roll = rnd.nextInt(6) + 1;
-    Map<ResourceType, Integer> tileResources = bot.currentTile.type.resourcesForRoll(roll);
-    StringBuilder log = new StringBuilder("Бросок d6 = " + roll + ". ");
+    int oldHealth = bot.health;
+    int oldPsyche = bot.psyche;
+    TileEffect effect = bot.currentTile.type.effectForRoll(roll);
 
-    if (tileResources.isEmpty()) {
-      log.append("Ничего не найдено");
-    } else {
-      for (Map.Entry<ResourceType, Integer> entry : tileResources.entrySet()) {
-        ResourceType type = entry.getKey();
-        int gained = entry.getValue();
-        resourceService.add(type, gained);
-        log.append(type.name()).append("=").append(gained).append(" ");
-      }
+    effect.applyTo(bot);
+    for (Map.Entry<ResourceType, Integer> entry : effect.resources().entrySet()) {
+      resourceService.add(entry.getKey(), entry.getValue());
     }
 
-    return List.of("Бот собрал ресурсы: " + log.toString().trim());
+    return List.of(
+        "Бот собрал ресурсы: "
+            + ("Бросок d6 = "
+                    + roll
+                    + ". "
+                    + logService.createCollectEffectLog(effect, oldHealth, oldPsyche, bot))
+                .trim());
   }
 
   private boolean isActionRemain(Bot bot) {

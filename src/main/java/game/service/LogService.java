@@ -2,7 +2,8 @@ package game.service;
 
 import game.GameConfig;
 import game.model.Bot;
-import game.model.ResourceType;
+import game.model.action.ResourceType;
+import game.model.effect.TileEffect;
 import game.model.tile.Tile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,8 @@ public class LogService {
     this.config = config;
   }
 
-  public void printEndTurnInfo(int game, int turn, Map<Bot, List<String>> actions, List<Bot> activePlayers) {
+  public void printEndTurnInfo(
+      int game, int turn, Map<Bot, List<String>> actions, List<Bot> activePlayers) {
     log.info("--------------------------------");
     log.info("Игра {} ход {}", game, turn);
 
@@ -68,12 +70,12 @@ public class LogService {
     log.info("Общие ресурсы группы: {}", resourceService.getAll());
     for (Bot bot : activePlayers) {
       log.info(
-              "Бот {}: {} из {} health и {} из {} psyche",
-              bot.name,
-              bot.health,
-              bot.healthCap,
-              bot.psyche,
-              bot.psycheCap);
+          "Бот {}: {} из {} health и {} из {} psyche",
+          bot.name,
+          bot.health,
+          bot.healthCap,
+          bot.psyche,
+          bot.psycheCap);
     }
   }
 
@@ -137,15 +139,28 @@ public class LogService {
     int psycheDiff = bot.psyche - oldPsyche;
 
     if (hpDiff != 0) {
-      effect.append("health ")
-              .append(hpDiff > 0 ? "+" + hpDiff : hpDiff);
+      effect.append("health ").append(hpDiff > 0 ? "+" + hpDiff : hpDiff);
     }
     if (psycheDiff != 0) {
       if (!effect.isEmpty()) effect.append(", ");
-      effect.append("psyche ")
-              .append(psycheDiff > 0 ? "+" + psycheDiff : psycheDiff);
+      effect.append("psyche ").append(psycheDiff > 0 ? "+" + psycheDiff : psycheDiff);
     }
 
     return !effect.isEmpty() ? effect.toString() : "ничего";
+  }
+
+  public String createCollectEffectLog(TileEffect effect, int oldHealth, int oldPsyche, Bot bot) {
+    StringBuilder log = new StringBuilder();
+    if (effect.resources().isEmpty()) {
+      log.append("Ничего не найдено");
+    } else {
+      for (Map.Entry<ResourceType, Integer> entry : effect.resources().entrySet()) {
+        log.append(entry.getKey().name()).append(" = ").append(entry.getValue()).append(" ");
+      }
+    }
+
+    createLogDiscoverEffect(oldHealth, oldPsyche, bot);
+
+    return log.toString();
   }
 }

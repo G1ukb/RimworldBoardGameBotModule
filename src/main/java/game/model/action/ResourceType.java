@@ -1,4 +1,4 @@
-package game.model;
+package game.model.action;
 
 public enum ResourceType {
   FOOD(10),
