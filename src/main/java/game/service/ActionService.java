@@ -6,6 +6,8 @@ import game.model.action.ActionType;
 import game.model.tile.Tile;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -21,10 +23,10 @@ public class ActionService {
     this.resourceService = resourceService;
   }
 
-  public String execute(ActionType action, Bot bot, Tile target) {
-    if (!isActionRemain(bot)) return "Ход бота окончен";
+  public List<String> execute(ActionType action, Bot bot, Tile target) {
+    if (!isActionRemain(bot)) return List.of("Ход бота окончен");
 
-    String result =
+    List<String> result =
         switch (action) {
           case MOVE -> move(bot, target);
           case COLLECT -> collect(bot);
@@ -35,19 +37,26 @@ public class ActionService {
     return result;
   }
 
-  private String move(Bot bot, Tile destination) {
-    if (destination == null) return "";
+  private List<String> move(Bot bot, Tile destination) {
+    if (destination == null) return List.of();
+    List<String> logs = new ArrayList<>();
 
     bot.currentTile = destination;
-    mapService.exploreTile(destination, bot);
-    return "Бот переместился на тайл: " + destination.x + ":" + destination.y;
+    String effect = mapService.exploreTile(destination, bot);
+    logs.add("Бот переместился на тайл: " + destination.x + ":" + destination.y + " :" + destination.type.tileName());
+
+    if (!effect.isBlank()) {
+      logs.add("Эффект открытия тайла: " + effect);
+    }
+
+    return logs;
   }
 
-  private String waitAction() {
-    return "Бот ждет";
+  private List<String> waitAction() {
+    return List.of("Бот ждет");
   }
 
-  private String collect(Bot bot) {
+  private List<String> collect(Bot bot) {
     int roll = rnd.nextInt(6) + 1;
     Map<ResourceType, Integer> tileResources = bot.currentTile.type.resourcesForRoll(roll);
     StringBuilder log = new StringBuilder("Бросок d6 = " + roll + ". ");
@@ -63,7 +72,7 @@ public class ActionService {
       }
     }
 
-    return "Бот собрал ресурсы: " + log.toString().trim();
+    return List.of("Бот собрал ресурсы: " + log.toString().trim());
   }
 
   private boolean isActionRemain(Bot bot) {

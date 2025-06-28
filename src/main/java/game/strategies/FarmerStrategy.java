@@ -28,18 +28,18 @@ public class FarmerStrategy implements BotStrategy {
     List<String> logs = new ArrayList<>();
     ResourceType need = findNeededResource();
     if (need == null) {
-      logs.add(actionService.execute(ActionType.WAIT, bot, null));
+      logs.addAll(actionService.execute(ActionType.WAIT, bot, null));
       return logs;
     }
 
     if (bot.currentTile.type.hasResource(need)) {
-      logs.add(actionService.execute(ActionType.COLLECT, bot, null));
+      logs.addAll(actionService.execute(ActionType.COLLECT, bot, null));
     } else {
       Tile next = pathfindingService.nextStep(bot.currentTile, t -> t.type.hasResource(need));
       if (next != null && next != bot.currentTile) {
-        logs.add(actionService.execute(ActionType.MOVE, bot, next));
+        logs.addAll(actionService.execute(ActionType.MOVE, bot, next));
       } else {
-        logs.add(actionService.execute(ActionType.COLLECT, bot, null));
+        logs.addAll(actionService.execute(ActionType.COLLECT, bot, null));
       }
     }
     return logs;

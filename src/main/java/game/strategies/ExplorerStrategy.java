@@ -25,9 +25,9 @@ public class ExplorerStrategy implements BotStrategy {
     Tile next = pathfindingService.nextStep(bot.currentTile, t -> !t.isExplored);
 
     if (next != null && next != bot.currentTile) {
-      logs.add(actionService.execute(ActionType.MOVE, bot, next));
+      logs.addAll(actionService.execute(ActionType.MOVE, bot, next));
     }
-    logs.add(actionService.execute(ActionType.COLLECT, bot, null));
+    logs.addAll(actionService.execute(ActionType.COLLECT, bot, null));
     return logs;
   }
 }

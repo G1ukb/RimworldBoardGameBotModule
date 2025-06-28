@@ -38,7 +38,11 @@ public class LogService {
       if (acts != null) {
         int idx = 1;
         for (String a : acts) {
-          log.info("Действие {}: {}", idx++, a);
+          if (a.startsWith("Эффект открытия тайла")) {
+            log.info(a);
+          } else {
+            log.info("Действие {}: {}", idx++, a);
+          }
         }
       }
     }
@@ -62,6 +66,15 @@ public class LogService {
     }
 
     log.info("Общие ресурсы группы: {}", resourceService.getAll());
+    for (Bot bot : activePlayers) {
+      log.info(
+              "Бот {}: {} из {} health и {} из {} psyche",
+              bot.name,
+              bot.health,
+              bot.healthCap,
+              bot.psyche,
+              bot.psycheCap);
+    }
   }
 
   public void logEndGameProgress() {
@@ -116,5 +129,23 @@ public class LogService {
     int left = spaces / 2;
     int right = spaces - left;
     return " ".repeat(left) + content + " ".repeat(right);
+  }
+
+  public String createLogDiscoverEffect(int oldHealth, int oldPsyche, Bot bot) {
+    StringBuilder effect = new StringBuilder();
+    int hpDiff = bot.health - oldHealth;
+    int psycheDiff = bot.psyche - oldPsyche;
+
+    if (hpDiff != 0) {
+      effect.append("health ")
+              .append(hpDiff > 0 ? "+" + hpDiff : hpDiff);
+    }
+    if (psycheDiff != 0) {
+      if (!effect.isEmpty()) effect.append(", ");
+      effect.append("psyche ")
+              .append(psycheDiff > 0 ? "+" + psycheDiff : psycheDiff);
+    }
+
+    return !effect.isEmpty() ? effect.toString() : "ничего";
   }
 }

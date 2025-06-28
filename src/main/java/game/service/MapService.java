@@ -3,6 +3,7 @@ package game.service;
 import game.GameConfig;
 import game.model.Bot;
 import game.model.tile.Tile;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -14,10 +15,12 @@ public class MapService {
   public final Map<Point, Tile> tiles = new HashMap<>();
   private final TileService tileService;
   private final GameConfig config;
+  private final LogService logService;
 
-  public MapService(TileService tileService, GameConfig config) {
+  public MapService(TileService tileService, GameConfig config, @Lazy LogService logService) {
     this.tileService = tileService;
     this.config = config;
+    this.logService = logService;
   }
 
   public void generateStartTile() {
@@ -43,10 +46,15 @@ public class MapService {
     return x >= config.minX() && x <= config.maxX() && y >= config.minY() && y <= config.maxY();
   }
 
-  public void exploreTile(Tile tile, Bot bot) {
+  public String exploreTile(Tile tile, Bot bot) {
     if (!tile.isExplored) {
       tile.isExplored = true;
+      int oldHealth = bot.health;
+      int oldPsyche = bot.psyche;
+
       tile.type.applyDiscoverEffect(bot);
+      return logService.createLogDiscoverEffect(oldHealth, oldPsyche, bot);
     }
+    return "";
   }
 }
