@@ -1,48 +1,112 @@
 package game.model.tile;
 
+import game.model.Bot;
 import game.model.ResourceType;
 
-import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public enum TileType {
   // Стартовые тайлы
-  START(TileCategory.START, " (s)", "Стартовая позиция", Map.of(ResourceType.FOOD, 2)),
+  START(TileCategory.START,
+          " (s)",
+          "Стартовая позиция",
+          bot -> bot.psyche = Math.max(bot.psyche - 1, 0),
+          Map.of(
+                  1, Map.of(),
+                  2, Map.of(),
+                  3, Map.of(),
+                  4, Map.of(ResourceType.FOOD, 1),
+                  5, Map.of(ResourceType.FOOD, 1),
+                  6, Map.of(ResourceType.FOOD, 2))),
 
   // Тайлы Полей
-  COMMON_GRASS(TileCategory.GRASS, " G1 ", "Обычное Поле", Map.of(ResourceType.FOOD, 1)),
-  SMOG_GRASS(TileCategory.GRASS, " G2 ", "Задымленное Поле", Map.of(ResourceType.FOOD, 1)),
+  COMMON_GRASS(
+      TileCategory.GRASS,
+      " G1 ",
+      "Поле тишины",
+      bot -> bot.psyche = Math.max(bot.psyche - 1, 0),
+      Map.of(
+          1, Map.of(),
+          2, Map.of(),
+          3, Map.of(),
+          4, Map.of(ResourceType.FOOD, 1),
+          5, Map.of(ResourceType.FOOD, 1),
+          6, Map.of(ResourceType.FOOD, 2))),
 
   // Тайлы Леса
   COMMON_FOREST(
-      TileCategory.FOREST, " F1 ", "Обычный Лес", Map.of(ResourceType.BUILDING_MATERIAL, 2)),
+      TileCategory.FOREST,
+      " F1 ",
+      "Обычный Лес",
+      bot -> {},
+      Map.of(
+          1, Map.of(),
+          2, Map.of(),
+          3, Map.of(),
+          4, Map.of(ResourceType.BUILDING_MATERIAL, 1),
+          5, Map.of(ResourceType.BUILDING_MATERIAL, 1),
+          6, Map.of(ResourceType.BUILDING_MATERIAL, 2))),
 
   // Тайлы Воды
-  COMMON_LAKE(TileCategory.WATER, " W1 ", "Обычное Озеро", Map.of(ResourceType.MEDICINE, 1)),
+  COMMON_LAKE(
+      TileCategory.WATER,
+      " W1 ",
+      "Обычное Озеро",
+      bot -> {},
+      Map.of(
+          1, Map.of(),
+          2, Map.of(),
+          3, Map.of(),
+          4, Map.of(ResourceType.MEDICINE, 1),
+          5, Map.of(ResourceType.MEDICINE, 1),
+          6, Map.of(ResourceType.MEDICINE, 2))),
 
   // Тайлы Гор
   COMMON_MOUNTAIN(
       TileCategory.MOUNTAIN,
       " M1 ",
       "Обычная Горная Местность",
-      Map.of(ResourceType.BUILDING_MATERIAL, 3)),
+      bot -> {},
+      Map.of(
+          1, Map.of(),
+          2, Map.of(),
+          3, Map.of(),
+          4, Map.of(ResourceType.BUILDING_MATERIAL, 1),
+          5, Map.of(ResourceType.BUILDING_MATERIAL, 1),
+          6, Map.of(ResourceType.BUILDING_MATERIAL, 2))),
 
   // Тайлы Пустыни
-  DESERT(TileCategory.DESERT, " D1 ", "Обычная Пустыня", Map.of(ResourceType.SPECIAL, 1));
+  DESERT(TileCategory.DESERT,
+          " D1 ",
+          "Обычная Пустыня",
+          bot -> {},
+          Map.of(
+                  1, Map.of(),
+                  2, Map.of(),
+                  3, Map.of(),
+                  4, Map.of(ResourceType.SPECIAL, 1),
+                  5, Map.of(ResourceType.SPECIAL, 1),
+                  6, Map.of(ResourceType.SPECIAL, 2)));
 
   private final TileCategory category;
   private final String symbol;
   private final String tileName;
-  private final Map<ResourceType, Integer> resources;
+  private final Map<Integer, Map<ResourceType, Integer>> resourceRollTable;
+  private final Consumer<Bot> onDiscover;
 
   TileType(
-      TileCategory category, String symbol, String tileName, Map<ResourceType, Integer> resources) {
+      TileCategory category,
+      String symbol,
+      String tileName,
+      Consumer<Bot> onDiscover,
+      Map<Integer, Map<ResourceType, Integer>> resourceRollTable) {
     this.category = category;
     this.symbol = symbol;
     this.tileName = tileName;
 
-    this.resources = new EnumMap<>(ResourceType.class);
-    this.resources.putAll(resources);
+    this.onDiscover = onDiscover;
+    this.resourceRollTable = resourceRollTable;
   }
 
   public TileCategory category() {
@@ -57,7 +121,15 @@ public enum TileType {
     return tileName;
   }
 
-  public Map<ResourceType, Integer> resources() {
-    return resources;
+  public boolean hasResource(ResourceType type) {
+    return resourceRollTable.values().stream().anyMatch(m -> m.containsKey(type));
+  }
+
+  public Map<ResourceType, Integer> resourcesForRoll(int roll) {
+    return resourceRollTable.getOrDefault(roll, Map.of());
+  }
+
+  public void applyDiscoverEffect(Bot bot) {
+    onDiscover.accept(bot);
   }
 }

@@ -7,12 +7,14 @@ import game.model.tile.Tile;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class ActionService {
 
   private final MapService mapService;
   private final ResourceService resourceService;
+  private final Random rnd = new Random();
 
   public ActionService(MapService mapService, ResourceService resourceService) {
     this.mapService = mapService;
@@ -37,7 +39,7 @@ public class ActionService {
     if (destination == null) return "";
 
     bot.currentTile = destination;
-    mapService.exploreTile(destination);
+    mapService.exploreTile(destination, bot);
     return "Бот переместился на тайл: " + destination.x + ":" + destination.y;
   }
 
@@ -46,14 +48,19 @@ public class ActionService {
   }
 
   private String collect(Bot bot) {
-    Map<ResourceType, Integer> tileResources = bot.currentTile.type.resources();
-    StringBuilder log = new StringBuilder();
+    int roll = rnd.nextInt(6) + 1;
+    Map<ResourceType, Integer> tileResources = bot.currentTile.type.resourcesForRoll(roll);
+    StringBuilder log = new StringBuilder("Бросок d6 = " + roll + ". ");
 
-    for (Map.Entry<ResourceType, Integer> entry : tileResources.entrySet()) {
-      ResourceType type = entry.getKey();
-      int gained = entry.getValue();
-      resourceService.add(type, gained);
-      log.append(type.name()).append("=").append(gained).append(" ");
+    if (tileResources.isEmpty()) {
+      log.append("Ничего не найдено");
+    } else {
+      for (Map.Entry<ResourceType, Integer> entry : tileResources.entrySet()) {
+        ResourceType type = entry.getKey();
+        int gained = entry.getValue();
+        resourceService.add(type, gained);
+        log.append(type.name()).append("=").append(gained).append(" ");
+      }
     }
 
     return "Бот собрал ресурсы: " + log.toString().trim();

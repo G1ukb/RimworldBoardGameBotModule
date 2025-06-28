@@ -1,6 +1,7 @@
 package game.service;
 
 import game.GameConfig;
+import game.model.Bot;
 import game.model.tile.Tile;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +43,10 @@ public class MapService {
     return x >= config.minX() && x <= config.maxX() && y >= config.minY() && y <= config.maxY();
   }
 
-  public void exploreTile(Tile tile) {
-    if (!tile.isExplored) tile.isExplored = true;
+  public void exploreTile(Tile tile, Bot bot) {
+    if (!tile.isExplored) {
+      tile.isExplored = true;
+      tile.type.applyDiscoverEffect(bot);
+    }
   }
-
 }

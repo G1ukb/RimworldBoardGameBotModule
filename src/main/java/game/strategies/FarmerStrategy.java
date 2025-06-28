@@ -32,11 +32,10 @@ public class FarmerStrategy implements BotStrategy {
       return logs;
     }
 
-    if (bot.currentTile.type.resources().containsKey(need)) {
+    if (bot.currentTile.type.hasResource(need)) {
       logs.add(actionService.execute(ActionType.COLLECT, bot, null));
     } else {
-      Tile next =
-          pathfindingService.nextStep(bot.currentTile, t -> t.type.resources().containsKey(need));
+      Tile next = pathfindingService.nextStep(bot.currentTile, t -> t.type.hasResource(need));
       if (next != null && next != bot.currentTile) {
         logs.add(actionService.execute(ActionType.MOVE, bot, next));
       } else {
