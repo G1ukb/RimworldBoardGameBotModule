@@ -2,6 +2,7 @@ package game.service;
 
 import game.GameConfig;
 import game.model.Bot;
+import game.model.effect.DiceRollEffect;
 import game.model.effect.Effect;
 import game.model.tile.Tile;
 import org.springframework.context.annotation.Lazy;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 @Service
 public class MapService {
@@ -53,7 +55,7 @@ public class MapService {
     return x < config.minX() || x > config.maxX() || y < config.minY() || y > config.maxY();
   }
 
-  public String exploreTile(Tile tile, Bot bot) {
+  public List<String> exploreTile(Tile tile, Bot bot) {
     if (!tile.isExplored) {
       tile.isExplored = true;
       int oldHealth = bot.health;
@@ -61,13 +63,25 @@ public class MapService {
       int oldActions = bot.actionsRemaining;
 
       Effect effect = tile.type.discoverEffect();
+      List<String> logs = new ArrayList<>();
+
       effect.applyTo(bot);
       for (var entry : effect.resources().entrySet()) {
         resourceService.add(entry.getKey(), entry.getValue());
       }
 
-      return logService.createLogDiscoverEffect(oldHealth, oldPsyche, oldActions, bot);
+      if (effect instanceof DiceRollEffect dice) {
+        logs.add(
+            "Был сделан бросок: Результат "
+                + dice.lastRoll()
+                + ":"
+                + logService.createLogDiscoverEffect(oldHealth, oldPsyche, oldActions, bot));
+      } else {
+        logs.add(logService.createLogDiscoverEffect(oldHealth, oldPsyche, oldActions, bot));
+      }
+
+      return logs;
     }
-    return "";
+    return List.of();
   }
 }

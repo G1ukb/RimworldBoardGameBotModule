@@ -3,10 +3,7 @@ package game.service;
 import game.model.tile.BasicTile;
 import game.model.tile.desert.CommonDesertTile;
 import game.model.tile.forest.CommonForestTile;
-import game.model.tile.grass.G2SunnyPlains;
-import game.model.tile.grass.G3WanderingStones;
-import game.model.tile.grass.G4HoneyFields;
-import game.model.tile.grass.G5DreamSteppe;
+import game.model.tile.grass.*;
 import game.model.tile.lake.CommonLakeTile;
 import game.model.tile.mountain.CommonMountainTile;
 import game.model.tile.start.CommonStartTile;
@@ -28,7 +25,12 @@ public class TileService {
             //            new G2SunnyPlains(),
             //            new G3WanderingStones(),
             //            new G4HoneyFields(),
-            new G5DreamSteppe(),
+            //            new G5DreamSteppe(),
+            //            new G6LivingGrass(),
+            //            new G7RainPlain(),
+            //            new G8SaltFlats(),
+            //            new G9GrassWhirls(),
+            new G10BarrenPlain(),
             new CommonForestTile(),
             new CommonDesertTile(),
             new CommonLakeTile(),

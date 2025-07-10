@@ -47,7 +47,7 @@ public class ActionService {
     List<String> logs = new ArrayList<>();
 
     bot.currentTile = destination;
-    String effect = mapService.exploreTile(destination, bot);
+    List<String> effects = mapService.exploreTile(destination, bot);
     logs.add(
         "Бот переместился на тайл: "
             + destination.x
@@ -56,8 +56,12 @@ public class ActionService {
             + " : "
             + destination.type.tileName());
 
-    if (!effect.isBlank()) {
-      logs.add("Тайл открыт впервые: " + effect);
+    if (!effects.isEmpty()) {
+      for (String e : effects) {
+        if (!e.isBlank()) {
+          logs.add("Тайл открыт впервые: " + e);
+        }
+      }
     }
 
     return logs;
