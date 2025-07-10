@@ -3,7 +3,7 @@ package game.service;
 import game.model.Bot;
 import game.model.action.ActionType;
 import game.model.action.ResourceType;
-import game.model.effect.TileEffect;
+import game.model.effect.Effect;
 import game.model.tile.Tile;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +71,7 @@ public class ActionService {
     int roll = rnd.nextInt(6) + 1;
     int oldHealth = bot.health;
     int oldPsyche = bot.psyche;
-    TileEffect effect = bot.currentTile.type.effectForRoll(roll);
+    Effect effect = bot.currentTile.type.effectForRoll(roll);
 
     effect.applyTo(bot);
     for (Map.Entry<ResourceType, Integer> entry : effect.resources().entrySet()) {

@@ -2,7 +2,7 @@ package game.service;
 
 import game.GameConfig;
 import game.model.Bot;
-import game.model.effect.TileEffect;
+import game.model.effect.Effect;
 import game.model.tile.Tile;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -43,14 +43,14 @@ public class MapService {
   }
 
   public Tile getTileAt(int x, int y) {
-    if (!isWithinBounds(x, y)) {
+    if (isWithinBounds(x, y)) {
       return null;
     }
     return tiles.get(new Point(x, y));
   }
 
   public boolean isWithinBounds(int x, int y) {
-    return x >= config.minX() && x <= config.maxX() && y >= config.minY() && y <= config.maxY();
+    return x < config.minX() || x > config.maxX() || y < config.minY() || y > config.maxY();
   }
 
   public String exploreTile(Tile tile, Bot bot) {
@@ -59,7 +59,7 @@ public class MapService {
       int oldHealth = bot.health;
       int oldPsyche = bot.psyche;
 
-      TileEffect effect = tile.type.discoverEffect();
+      Effect effect = tile.type.discoverEffect();
       effect.applyTo(bot);
       for (var entry : effect.resources().entrySet()) {
         resourceService.add(entry.getKey(), entry.getValue());

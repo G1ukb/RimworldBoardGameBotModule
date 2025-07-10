@@ -3,7 +3,7 @@ package game.service;
 import game.GameConfig;
 import game.model.Bot;
 import game.model.action.ResourceType;
-import game.model.effect.TileEffect;
+import game.model.effect.Effect;
 import game.model.tile.Tile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,7 +152,7 @@ public class LogService {
     return effect.toString();
   }
 
-  public String createCollectEffectLog(TileEffect effect, int oldHealth, int oldPsyche, Bot bot) {
+  public String createCollectEffectLog(Effect effect, int oldHealth, int oldPsyche, Bot bot) {
     StringBuilder log = new StringBuilder();
     if (effect.resources().isEmpty()) {
       log.append("Ресурс не найден");

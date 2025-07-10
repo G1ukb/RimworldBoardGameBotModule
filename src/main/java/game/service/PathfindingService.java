@@ -43,7 +43,7 @@ public class PathfindingService {
       for (Point dir : DIRECTIONS) {
         int nx = current.x + dir.x;
         int ny = current.y + dir.y;
-        if (!mapService.isWithinBounds(nx, ny)) continue;
+        if (mapService.isWithinBounds(nx, ny)) continue;
         Tile neighbor = mapService.getTileAt(nx, ny);
         Point p = new Point(nx, ny);
         if (neighbor != null && !visited.contains(p)) {

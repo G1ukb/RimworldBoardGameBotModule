@@ -1,6 +1,7 @@
 package game.model.tile;
 
 import game.model.action.ResourceType;
+import game.model.effect.Effect;
 import game.model.effect.TileEffect;
 
 import java.util.Map;
@@ -10,15 +11,15 @@ public abstract class BasicTile {
   private final TileCategory category;
   private final String symbol;
   private final String tileName;
-  private final TileEffect onDiscover;
-  private final Map<Integer, TileEffect> resourceRollTable;
+  private final Effect onDiscover;
+  private final Map<Integer, Effect> resourceRollTable;
 
   public BasicTile(
       TileCategory category,
       String symbol,
       String tileName,
-      TileEffect onDiscover,
-      Map<Integer, TileEffect> resourceRollTable) {
+      Effect onDiscover,
+      Map<Integer, Effect> resourceRollTable) {
     this.category = category;
     this.symbol = symbol;
     this.tileName = tileName;
@@ -43,11 +44,11 @@ public abstract class BasicTile {
     return resourceRollTable.values().stream().anyMatch(e -> e.resources().containsKey(type));
   }
 
-  public TileEffect effectForRoll(int roll) {
+  public Effect effectForRoll(int roll) {
     return resourceRollTable.getOrDefault(roll, TileEffect.NONE);
   }
 
-  public TileEffect discoverEffect() {
+  public Effect discoverEffect() {
     return onDiscover;
   }
 }
