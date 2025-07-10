@@ -4,6 +4,7 @@ import game.model.effect.TileEffect;
 import game.model.tile.BasicTile;
 import game.model.tile.TileCategory;
 
+import java.util.List;
 import java.util.Map;
 
 public class G1FieldOfSilence extends BasicTile {
@@ -33,6 +34,7 @@ public class G1FieldOfSilence extends BasicTile {
             5,
             new TileEffect(Map.of(), b -> b.psyche = Math.min(b.psyche + 1, b.psycheCap)),
             6,
-            new TileEffect(Map.of(), b -> b.psyche = Math.min(b.psyche + 2, b.psycheCap))));
+            new TileEffect(Map.of(), b -> b.psyche = Math.min(b.psyche + 2, b.psycheCap))),
+        List.of());
   }
 }

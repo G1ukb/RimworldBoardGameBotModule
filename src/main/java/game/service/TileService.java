@@ -4,6 +4,8 @@ import game.model.tile.BasicTile;
 import game.model.tile.desert.CommonDesertTile;
 import game.model.tile.forest.CommonForestTile;
 import game.model.tile.grass.G2SunnyPlains;
+import game.model.tile.grass.G3WanderingStones;
+import game.model.tile.grass.G4HoneyFields;
 import game.model.tile.lake.CommonLakeTile;
 import game.model.tile.mountain.CommonMountainTile;
 import game.model.tile.start.CommonStartTile;
@@ -22,7 +24,9 @@ public class TileService {
     randomTiles =
         List.of(
             //            new G1FieldOfSilence(),
-            new G2SunnyPlains(),
+            //            new G2SunnyPlains(),
+            //            new G3WanderingStones(),
+            new G4HoneyFields(),
             new CommonForestTile(),
             new CommonDesertTile(),
             new CommonLakeTile(),

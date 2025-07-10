@@ -5,6 +5,7 @@ import game.model.effect.TileEffect;
 import game.model.tile.BasicTile;
 import game.model.tile.TileCategory;
 
+import java.util.List;
 import java.util.Map;
 
 public class CommonForestTile extends BasicTile {
@@ -27,6 +28,7 @@ public class CommonForestTile extends BasicTile {
             5,
             new TileEffect(Map.of(ResourceType.BUILDING_MATERIAL, 1), b -> {}),
             6,
-            new TileEffect(Map.of(ResourceType.BUILDING_MATERIAL, 2), b -> {})));
+            new TileEffect(Map.of(ResourceType.BUILDING_MATERIAL, 2), b -> {})),
+        List.of(ResourceType.BUILDING_MATERIAL));
   }
 }

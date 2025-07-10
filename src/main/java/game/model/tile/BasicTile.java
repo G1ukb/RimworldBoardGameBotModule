@@ -4,6 +4,7 @@ import game.model.action.ResourceType;
 import game.model.effect.Effect;
 import game.model.effect.TileEffect;
 
+import java.util.List;
 import java.util.Map;
 
 public abstract class BasicTile {
@@ -13,19 +14,22 @@ public abstract class BasicTile {
   private final String tileName;
   private final Effect onDiscover;
   private final Map<Integer, Effect> resourceRollTable;
+  private final List<ResourceType> resourceThatCanBeFound;
 
   public BasicTile(
       TileCategory category,
       String symbol,
       String tileName,
       Effect onDiscover,
-      Map<Integer, Effect> resourceRollTable) {
+      Map<Integer, Effect> resourceRollTable,
+      List<ResourceType> resourceThatCanBeFound) {
     this.category = category;
     this.symbol = symbol;
     this.tileName = tileName;
 
     this.onDiscover = onDiscover;
     this.resourceRollTable = resourceRollTable;
+    this.resourceThatCanBeFound = resourceThatCanBeFound;
   }
 
   public TileCategory category() {
@@ -41,7 +45,7 @@ public abstract class BasicTile {
   }
 
   public boolean hasResource(ResourceType type) {
-    return resourceRollTable.values().stream().anyMatch(e -> e.resources().containsKey(type));
+    return resourceThatCanBeFound.stream().anyMatch(resourceType -> resourceType.equals(type));
   }
 
   public Effect effectForRoll(int roll) {

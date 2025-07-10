@@ -39,6 +39,7 @@ public class G2SunnyPlains extends BasicTile {
             5,
             new TileEffect(Map.of(ResourceType.FOOD, 2), b -> {}),
             6,
-            new TileEffect(Map.of(ResourceType.FOOD, 2), b -> {})));
+            new TileEffect(Map.of(ResourceType.FOOD, 2), b -> {})),
+        List.of(ResourceType.FOOD));
   }
 }
