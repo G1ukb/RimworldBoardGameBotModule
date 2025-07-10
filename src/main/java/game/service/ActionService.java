@@ -38,7 +38,7 @@ public class ActionService {
           case WAIT -> waitAction();
         };
 
-    bot.actionsRemaining--;
+    bot.actionsRemaining = Math.max(bot.actionsRemaining - 1, 0);
     return result;
   }
 
@@ -57,7 +57,7 @@ public class ActionService {
             + destination.type.tileName());
 
     if (!effect.isBlank()) {
-      logs.add("Эффект открытия тайла: " + effect);
+      logs.add("Тайл открыт впервые: " + effect);
     }
 
     return logs;
@@ -71,6 +71,7 @@ public class ActionService {
     int roll = rnd.nextInt(6) + 1;
     int oldHealth = bot.health;
     int oldPsyche = bot.psyche;
+    int oldActions = bot.actionsRemaining;
     Effect effect = bot.currentTile.type.effectForRoll(roll);
 
     effect.applyTo(bot);
@@ -83,7 +84,8 @@ public class ActionService {
             + ("Бросок d6 = "
                     + roll
                     + ". "
-                    + logService.createCollectEffectLog(effect, oldHealth, oldPsyche, bot))
+                    + logService.createCollectEffectLog(
+                        effect, oldHealth, oldPsyche, oldActions, bot))
                 .trim());
   }
 

@@ -10,6 +10,12 @@ public record TileEffect(Map<ResourceType, Integer> resources, Consumer<Bot> bot
     implements Effect {
 
   public static final TileEffect NONE = new TileEffect(Map.of(), b -> {});
+  public static final TileEffect SKIP_TURN =
+    new TileEffect(Map.of(),
+      b -> {
+        b.actionsRemaining = 0;
+        b.isDone = true;
+      });
 
   @Override
   public void applyTo(Bot bot) {

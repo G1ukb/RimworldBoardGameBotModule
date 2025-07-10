@@ -36,11 +36,12 @@ public class LogService {
 
     for (Bot bot : activePlayers) {
       log.info("Bot: {}", bot.name);
+      log.info("Место: {}", bot.currentTile.type.tileName());
       List<String> acts = actions.get(bot);
       if (acts != null) {
         int idx = 1;
         for (String a : acts) {
-          if (a.startsWith("Эффект открытия тайла")) {
+          if (a.startsWith("Тайл открыт впервые")) {
             log.info(a);
           } else {
             log.info("Действие {}: {}", idx++, a);
@@ -133,7 +134,7 @@ public class LogService {
     return " ".repeat(left) + content + " ".repeat(right);
   }
 
-  public String createLogDiscoverEffect(int oldHealth, int oldPsyche, Bot bot) {
+  public String createLogDiscoverEffect(int oldHealth, int oldPsyche, int oldActions, Bot bot) {
     StringBuilder effect = new StringBuilder();
     int hpDiff = bot.health - oldHealth;
     int psycheDiff = bot.psyche - oldPsyche;
@@ -147,12 +148,17 @@ public class LogService {
       effect.append(" psyche ").append(psycheDiff > 0 ? "+" + psycheDiff : psycheDiff);
     }
 
+    if (bot.actionsRemaining == 0 && oldActions > 0) {
+      effect.append("пропуск хода");
+    }
+
     if (effect.toString().length() == " Эффект:".length()) effect.append(" никакого эффекта");
 
     return effect.toString();
   }
 
-  public String createCollectEffectLog(Effect effect, int oldHealth, int oldPsyche, Bot bot) {
+  public String createCollectEffectLog(
+      Effect effect, int oldHealth, int oldPsyche, int oldActions, Bot bot) {
     StringBuilder log = new StringBuilder();
     if (effect.resources().isEmpty()) {
       log.append("Ресурс не найден");
@@ -162,7 +168,7 @@ public class LogService {
       }
     }
 
-    log.append(createLogDiscoverEffect(oldHealth, oldPsyche, bot));
+    log.append(createLogDiscoverEffect(oldHealth, oldPsyche, oldActions, bot));
 
     return log.toString();
   }

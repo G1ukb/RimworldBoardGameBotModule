@@ -58,6 +58,7 @@ public class MapService {
       tile.isExplored = true;
       int oldHealth = bot.health;
       int oldPsyche = bot.psyche;
+      int oldActions = bot.actionsRemaining;
 
       Effect effect = tile.type.discoverEffect();
       effect.applyTo(bot);
@@ -65,7 +66,7 @@ public class MapService {
         resourceService.add(entry.getKey(), entry.getValue());
       }
 
-      return logService.createLogDiscoverEffect(oldHealth, oldPsyche, bot);
+      return logService.createLogDiscoverEffect(oldHealth, oldPsyche, oldActions, bot);
     }
     return "";
   }
