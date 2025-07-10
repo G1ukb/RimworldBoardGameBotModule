@@ -137,29 +137,32 @@ public class LogService {
     StringBuilder effect = new StringBuilder();
     int hpDiff = bot.health - oldHealth;
     int psycheDiff = bot.psyche - oldPsyche;
+    effect.append(" Эффект:");
 
     if (hpDiff != 0) {
-      effect.append("health ").append(hpDiff > 0 ? "+" + hpDiff : hpDiff);
+      effect.append(" health ").append(hpDiff > 0 ? "+" + hpDiff : hpDiff);
     }
     if (psycheDiff != 0) {
       if (!effect.isEmpty()) effect.append(", ");
-      effect.append("psyche ").append(psycheDiff > 0 ? "+" + psycheDiff : psycheDiff);
+      effect.append(" psyche ").append(psycheDiff > 0 ? "+" + psycheDiff : psycheDiff);
     }
 
-    return !effect.isEmpty() ? effect.toString() : "ничего";
+    if (effect.toString().length() == " Эффект:".length()) effect.append(" никакого эффекта");
+
+    return effect.toString();
   }
 
   public String createCollectEffectLog(TileEffect effect, int oldHealth, int oldPsyche, Bot bot) {
     StringBuilder log = new StringBuilder();
     if (effect.resources().isEmpty()) {
-      log.append("Ничего не найдено");
+      log.append("Ресурс не найден");
     } else {
       for (Map.Entry<ResourceType, Integer> entry : effect.resources().entrySet()) {
         log.append(entry.getKey().name()).append(" = ").append(entry.getValue()).append(" ");
       }
     }
 
-    createLogDiscoverEffect(oldHealth, oldPsyche, bot);
+    log.append(createLogDiscoverEffect(oldHealth, oldPsyche, bot));
 
     return log.toString();
   }

@@ -17,16 +17,16 @@ public class G1FieldOfSilence extends BasicTile {
         new TileEffect(Map.of(), b -> b.psyche = Math.max(b.psyche - 1, 0)),
         Map.of(
             1,
-            TileEffect.NONE,
+            new TileEffect(Map.of(), b -> b.psyche = Math.max(b.psyche - 2, 0)),
             2,
-            TileEffect.NONE,
+            new TileEffect(Map.of(), b -> b.psyche = Math.max(b.psyche - 1, 0)),
             3,
-            TileEffect.NONE,
+            new TileEffect(Map.of(), b -> b.psyche = Math.max(b.psyche - 1, 0)),
             4,
-            new TileEffect(Map.of(ResourceType.FOOD, 1), b -> {}),
+            new TileEffect(Map.of(), b -> b.psyche = Math.min(b.psyche + 1, b.psycheCap)),
             5,
-            new TileEffect(Map.of(ResourceType.FOOD, 1), b -> {}),
+            new TileEffect(Map.of(), b -> b.psyche = Math.min(b.psyche + 1, b.psycheCap)),
             6,
-            new TileEffect(Map.of(ResourceType.FOOD, 2), b -> {})));
+            new TileEffect(Map.of(), b -> b.psyche = Math.min(b.psyche + 2, b.psycheCap))));
   }
 }
